@@ -1,7 +1,10 @@
-<h1>{{title}}</h1>
+<h1>{{ title }}</h1>
 <nav>
   <a routerLink="/dashboard">Dashboard</a>
   <a routerLink="/heroes">Heroes</a>
+  <button type="button" (click)="authService.GoogleAuth()">
+    Log in with Google
+  </button>
 </nav>
 <router-outlet></router-outlet>
 <app-messages></app-messages>
