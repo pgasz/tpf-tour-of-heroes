@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { FirestoreService } from '../firestore.service';
 
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
+import { Actors } from '../models/actors.model';
 
 @Component({
   selector: 'app-heroes',
@@ -9,16 +11,23 @@ import { HeroService } from '../hero.service';
   styleUrls: ['./heroes.component.css'],
 })
 export class HeroesComponent implements OnInit {
-  heroes: Hero[] = [];
+  heroes: Actors[] = [];
 
-  constructor(private heroService: HeroService) {}
+  // constructor(private heroService: HeroService) {}
+  constructor(private firestoreService: FirestoreService) {}
 
   ngOnInit(): void {
     this.getHeroes();
   }
 
   getHeroes(): void {
-    this.heroService.getHeroes().subscribe((heroes) => (this.heroes = heroes));
+    // this.heroService.getHeroes().subscribe((heroes) => (this.heroes = heroes));
+    this.firestoreService
+      .getAll()
+      .valueChanges()
+      .subscribe((data) => {
+        this.heroes = data;
+      });
   }
   seedHeroes(): void {
     fetch('https://jsonplaceholder.typicode.com/users')
@@ -35,13 +44,21 @@ export class HeroesComponent implements OnInit {
     if (!name) {
       return;
     }
-    this.heroService.addHero({ name } as Hero).subscribe((hero) => {
-      this.heroes.push(hero);
-    });
+    this.firestoreService
+      .create({ id: Math.random().toString(16).slice(2).toString(), name })
+      .then(() => {
+        console.log('Created new item successfully!');
+      });
   }
 
-  delete(hero: Hero): void {
-    this.heroes = this.heroes.filter((h) => h !== hero);
-    this.heroService.deleteHero(hero.id).subscribe();
+  delete(hero: Actors): void {
+    if (hero.id) {
+      this.firestoreService.delete(hero.id).then((dss) => {
+        console.log(dss);
+        // coś nie działa
+        this.getHeroes();
+        console.log('Delete item successfully!');
+      });
+    }
   }
 }

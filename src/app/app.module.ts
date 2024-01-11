@@ -18,6 +18,7 @@ import { MessagesComponent } from './messages/messages.component';
 import { AuthService } from './auth.service';
 import { AngularFireModule } from '@angular/fire/compat';
 import { firebaseConfig } from '../environment';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 
 @NgModule({
   imports: [
@@ -33,6 +34,7 @@ import { firebaseConfig } from '../environment';
       dataEncapsulation: false,
     }),
     AngularFireModule.initializeApp(firebaseConfig),
+    AngularFirestoreModule,
   ],
   providers: [AuthService],
   declarations: [
